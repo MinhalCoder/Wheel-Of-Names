@@ -207,21 +207,20 @@ const Entries = ({ setRiggedName }) => {
         placeholder='Enter names, each on a new line'
         value={names}
         onChange={e => {
-          if (inputRef?.current) {
-            const cursorPosition = (inputRef?.current as any)?.selectionStart
-            const { value } = e.target
-            const namesArray = value.split('\n')
-            const riggedName = namesArray.find(name => name.includes(','))
-            if (riggedName) (inputRef?.current as any).style.color = 'transparent'
+          const { value } = e.target
+          const namesArray = value.split('\n')
+          const riggedName = namesArray.find(name => name.includes(','))
+          if (riggedName && inputRef?.current) {
+            ;(inputRef?.current as any).style.color = 'transparent'
             onNameChange(riggedName, namesArray)
-            if (riggedName)
-              setTimeout(() => {
-                ;(inputRef?.current as any).setSelectionRange(
-                  cursorPosition - 1,
-                  cursorPosition - 1
-                )(inputRef?.current as any).style.color = 'white'
-              }, 1)
-          }
+            const cursorPosition = (inputRef?.current as any)?.selectionStart
+            const scroll = (inputRef?.current as any).scrollTop
+            setTimeout(() => {
+              ;(inputRef?.current as any).setSelectionRange(cursorPosition - 1, cursorPosition - 1)
+              ;(inputRef?.current as any).style.color = 'white'
+              ;(inputRef?.current as any).scrollTop = scroll
+            }, 1)
+          } else onNameChange(riggedName, namesArray)
         }}
       />
     </ControlsContainer>
