@@ -23,7 +23,7 @@
 }
 
 body {
-  background-color: var(--dark);
+  background-color: #121212;
   color: var(--white);
 }
 
@@ -62,5 +62,61 @@ h6 {
   }
   100% {
     transform: translateY(0);
+  }
+}
+
+.Mui-selected {
+  color: #fff !important;
+}
+
+.MuiButtonBase-root.MuiTab-root.MuiTab-textColorPrimary {
+  color: #bfbfbf;
+}
+
+.MuiBox-root {
+  padding: 0 !important;
+}
+
+@keyframes rotateAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: calc(100vh - 63px);
+  margin-top: 63px;
+}
+
+.leftContainer {
+  width: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.rightContainer {
+  width: 30%;
+  padding: 20px;
+  display: flex;
+  height: 100%;
+}
+
+@media (max-width: 1390px) {
+  .contentContainer {
+    flex-direction: column;
+  }
+  .rightContainer {
+    width: 100%;
+  }
+  .leftContainer {
+    width: 100%;
   }
 }

@@ -1,5 +1,6 @@
-import Controls from './Controls'
+import Entries from './Entries'
+import Results from './Results'
 import Navbar from './Navbar'
 import WheelComponent from './Wheel'
 
-export { Controls, Navbar, WheelComponent }
+export { Entries, Results, Navbar, WheelComponent }
