@@ -33,14 +33,9 @@ const determineTextColor = hexCode => {
   return contrastWithWhite > contrastWithBlack ? 'white' : 'black'
 }
 
-function _interopDefault(ex) {
-  return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex
-}
-
 // var FirstTimeRender = null
 
-import React, { useCallback, useEffect } from 'react'
-var React__default = _interopDefault(React)
+import React from 'react'
 
 var varWheelClicked = false
 var canvasContext = null
@@ -62,7 +57,7 @@ var WheelComponent = function WheelComponent(_ref) {
     downDuration = _ref$downDuration === void 0 ? 1000 : _ref$downDuration,
     _ref$fontFamily = _ref.fontFamily,
     fontFamily = _ref$fontFamily === void 0 ? 'proxima-nova' : _ref$fontFamily
-  var currentSegment = ''
+  var currentSegment: any = ''
   var isStarted = false
 
   winningSegment = _ref.winningSegment
@@ -182,9 +177,9 @@ var WheelComponent = function WheelComponent(_ref) {
     }
 
     canvas.addEventListener('click', spin, false)
-    canvasContext = canvas.getContext('2d')
+    canvasContext = (canvas as any).getContext('2d')
     // Clear the canvas
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height)
+    canvasContext.clearRect(0, 0, (canvas as any).width, (canvas as any).height)
   }
 
   var spin = function spin() {

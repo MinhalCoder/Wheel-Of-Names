@@ -43,7 +43,7 @@ function a11yProps(index) {
 const Sidebar = ({ winners, setWinners, setRiggedName }) => {
   const [value, setValue] = useState(0)
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (_: any, newValue) => {
     setValue(newValue)
   }
 
