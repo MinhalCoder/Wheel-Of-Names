@@ -158,7 +158,6 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   React.useEffect(function () {
-    wheelInit()
     setTimeout(function () {
       window.scrollTo(0, 1)
     }, 0)
@@ -174,9 +173,12 @@ var WheelComponent = function WheelComponent(_ref) {
 
   React.useEffect(
     function () {
-      if (!firstLoad) {
+      if (!firstLoad && names.trim() !== '') {
         wheelDraw()
+      } else if (!firstLoad && names.trim() === '') {
+        setFirstLoad(true)
       } else {
+        wheelInit()
         setFirstLoad(false)
       }
     },
@@ -294,13 +296,20 @@ var WheelComponent = function WheelComponent(_ref) {
     ctx.rotate((lastAngle + angle) / 2)
     ctx.fillStyle = textColor
     ctx.font =
-      `${isMobile || segments.length >= 15 ? (segments.length >= 35 ? 18 : 24) : 40}px ` +
-      fontFamily
+      `${
+        isMobile && segments.length >= 50
+          ? 10
+          : isMobile || segments.length >= 15
+            ? segments.length >= 35
+              ? 18
+              : 24
+            : 40
+      }px ` + fontFamily
     ctx.textAlign = 'end'
     ctx.fillText(
-      value.substr(0, 10),
+      value.substr(0, isMobile ? 10 : isLargeScreen ? 35 : 17),
       size / 2 + (isMobile ? 90 : isLargeScreen ? 240 : 160),
-      isMobile ? 5 : 10
+      isMobile ? (segments.length >= 50 ? 0 : 5) : segments.length >= 50 ? 0 : 10
     )
     ctx.restore()
   }
@@ -377,7 +386,7 @@ var WheelComponent = function WheelComponent(_ref) {
     ctx.clearRect(0, 0, (canvas as any).width, (canvas as any).height)
   }
 
-  if (names === '') return <Header>Enter some names to get started</Header>
+  if (names.trim() === '') return <Header>Enter some names to get started</Header>
   else
     return (
       <>
