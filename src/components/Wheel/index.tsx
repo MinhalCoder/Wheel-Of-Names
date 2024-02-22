@@ -75,17 +75,34 @@ var WheelComponent = function WheelComponent(_ref) {
     return uniqueNames
   }
 
-  function generateColorArray(inputArray: string[], outputLength: number) {
-    const inputLength = inputArray.length
-    const outputArray = []
+  // function generateColorArray(inputArray: string[], outputLength: number) {
+  //   const inputLength = inputArray.length
+  //   const outputArray = []
 
-    for (let i = 0; i < outputLength; i++) {
-      // Calculate the color index based on the iteration and reset when reaching the end of inputArray
-      const colorIndex = i % inputLength
-      outputArray.push(inputArray[colorIndex])
+  //   for (let i = 0; i < outputLength; i++) {
+  //     // Calculate the color index based on the iteration and reset when reaching the end of inputArray
+  //     const colorIndex = i % inputLength
+  //     outputArray.push(inputArray[colorIndex])
+  //   }
+
+  //   return outputArray
+  // }
+
+  function generateColorArray(arr: string[], length: number) {
+    if (arr.length === 0 || length <= 0) {
+      return []
     }
 
-    return outputArray
+    const result = []
+    let currentIndex = 0
+
+    for (let i = 0; i < length; i++) {
+      result.push(arr[currentIndex])
+      currentIndex =
+        i % 2 === 0 ? (currentIndex + 1) % arr.length : (arr.length - currentIndex - 1) % arr.length
+    }
+
+    return result
   }
 
   segColors = generateColorArray(colors, getSegments().length)
@@ -109,9 +126,9 @@ var WheelComponent = function WheelComponent(_ref) {
   // var upTime = timeConstant * upDuration
   // var downTime = timeConstant * downDuration
 
-  var maxSpeed = Math.PI / (segments.length >= 20 ? 40 : 50)
-  var upTime = segments.length * upDuration
-  var downTime = segments.length * downDuration * 1.4 //
+  var maxSpeed = Math.PI / (segments.length >= 20 ? 40 : 50) //(segments.length >= 20 ? 40 : 50)
+  var upTime = segments.length * upDuration //
+  var downTime = segments.length * downDuration * 1.4 //* 1.4
 
   var spinStart = 0
   var frames = 0
@@ -141,8 +158,6 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   React.useEffect(function () {
-    console.log('FIRST DRAW')
-
     wheelInit()
     setTimeout(function () {
       window.scrollTo(0, 1)
@@ -160,8 +175,6 @@ var WheelComponent = function WheelComponent(_ref) {
   React.useEffect(
     function () {
       if (!firstLoad) {
-        console.log('CHANGE DRAW')
-
         wheelDraw()
       } else {
         setFirstLoad(false)
@@ -222,6 +235,8 @@ var WheelComponent = function WheelComponent(_ref) {
           progress = 1
         } else {
           progress = duration / downTime
+          // if (progress >= 1) progress = 0
+          // else
           angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + 1.6)
         }
       } else {
@@ -229,7 +244,8 @@ var WheelComponent = function WheelComponent(_ref) {
         angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + 1.6) // 1.6
       }
 
-      if (progress >= 1) finished = true
+      if (progress >= 1 && (winningSegment ? segments[currentSegment] === winningSegment : true))
+        finished = true
     }
 
     angleCurrent += angleDelta

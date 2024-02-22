@@ -165,7 +165,7 @@ const Entries = ({ setRiggedName }) => {
                       if (index === -1) {
                         // Add color at index i
                         updated.splice(i, 0, color)
-                      } else {
+                      } else if (updated.length >= 2) {
                         // Remove the item at index i
                         updated.splice(index, 1)
                       }
