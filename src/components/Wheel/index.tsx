@@ -112,23 +112,19 @@ var WheelComponent = function WheelComponent(_ref) {
     isFinished = _useState[0],
     setFinished = _useState[1]
 
-  // var speedConstant = 30
-  // var timeConstant = 10
+  var lengthConstant = segments.length >= 65 ? 50 : 30
+  var winningProgress = segments.length >= 65 ? 0.8761 : 0.9761
 
   var timerHandle = 0
-  var timerDelay = 30
+  var timerDelay = lengthConstant
 
   // var timerDelay = speedConstant
   var angleCurrent = 0
   var angleDelta = 0
 
-  // var maxSpeed = Math.PI / speedConstant
-  // var upTime = timeConstant * upDuration
-  // var downTime = timeConstant * downDuration
-
-  var maxSpeed = Math.PI / 30 //(30 >= 20 ? 40 : 50)
-  var upTime = 30 * upDuration //
-  var downTime = 30 * downDuration * 1.4 //* 1.4
+  var maxSpeed = Math.PI / lengthConstant //(30 >= 20 ? 40 : 50)
+  var upTime = lengthConstant * upDuration //
+  var downTime = lengthConstant * downDuration //* 1.4
 
   var spinStart = 0
   var frames = 0
@@ -212,7 +208,7 @@ var WheelComponent = function WheelComponent(_ref) {
     dispatch(setLoading(true))
     if (timerHandle === 0) {
       spinStart = new Date().getTime()
-      // maxSpeed = Math.PI / segments.length // 15
+      maxSpeed = Math.PI / lengthConstant // 15
       frames = 0
       timerHandle = setInterval(onTimerTick, timerDelay)
     }
@@ -229,24 +225,19 @@ var WheelComponent = function WheelComponent(_ref) {
       progress = duration / upTime
       angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2)
     } else {
-      if (winningSegment) {
-        console.log('Winner:', winningSegment, '=>', segments[currentSegment])
-        if (segments[currentSegment] === winningSegment && frames > 30) {
-          progress = duration / upTime
-          angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + 1.6)
-          progress = 1
-        } else {
-          progress = duration / downTime
-          // if (progress >= 1) progress = 0
-          // else
-          angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + 1.6)
-        }
-      } else {
-        progress = duration / downTime
-        angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + 1.6) // 1.6
-      }
+      progress = duration / downTime
+      if (winningSegment && progress >= winningProgress) progress = winningProgress
+      angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2) // 1.6
 
-      if (progress >= 1 && (winningSegment ? segments[currentSegment] === winningSegment : true))
+      console.log('progress DOWN', progress, angleDelta)
+
+      if (
+        winningSegment
+          ? segments[currentSegment] === winningSegment &&
+            frames > lengthConstant &&
+            duration >= downTime
+          : progress >= 1
+      )
         finished = true
     }
 
@@ -266,7 +257,6 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   var wheelDraw = function wheelDraw() {
-    console.log('DRAW')
     clear()
     drawWheel()
     drawNeedle()
