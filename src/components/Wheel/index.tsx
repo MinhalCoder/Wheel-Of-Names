@@ -40,6 +40,8 @@ import React from 'react'
 var varWheelClicked = false
 var canvasContext = null
 var winningSegment = ''
+var segColors
+var segments
 
 var WheelComponent = function WheelComponent(_ref) {
   var onFinished = _ref.onFinished,
@@ -86,8 +88,8 @@ var WheelComponent = function WheelComponent(_ref) {
     return outputArray
   }
 
-  const segColors = generateColorArray(colors, getSegments().length)
-  const segments = getSegments()
+  segColors = generateColorArray(colors, getSegments().length)
+  segments = getSegments()
 
   var _useState = React.useState(false),
     isFinished = _useState[0],
@@ -116,6 +118,7 @@ var WheelComponent = function WheelComponent(_ref) {
 
   // const viewport = useViewport()
   const [wheelClicked, setWheelClicked] = React.useState(varWheelClicked)
+  const [firstLoad, setFirstLoad] = React.useState(true)
   const isMobileWidth = useMediaQuery('(max-height: 700px)')
   const isMobileHeight = useMediaQuery('(max-width: 700px)')
   const isLargeScreenWidth = useMediaQuery('(min-width: 1001px)')
@@ -138,6 +141,8 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   React.useEffect(function () {
+    console.log('FIRST DRAW')
+
     wheelInit()
     setTimeout(function () {
       window.scrollTo(0, 1)
@@ -154,7 +159,13 @@ var WheelComponent = function WheelComponent(_ref) {
 
   React.useEffect(
     function () {
-      wheelDraw()
+      if (!firstLoad) {
+        console.log('CHANGE DRAW')
+
+        wheelDraw()
+      } else {
+        setFirstLoad(false)
+      }
     },
     [names, colors]
   )
@@ -166,7 +177,6 @@ var WheelComponent = function WheelComponent(_ref) {
 
   var initCanvas = function initCanvas() {
     var canvas = document.getElementById('canvas')
-
     if (navigator.userAgent.indexOf('MSIE') !== -1) {
       canvas = document.createElement('canvas')
       // canvas.setAttribute('width', 500)
@@ -175,11 +185,12 @@ var WheelComponent = function WheelComponent(_ref) {
 
       document.getElementById('wheel').appendChild(canvas)
     }
-
-    canvas.addEventListener('click', spin, false)
-    canvasContext = (canvas as any).getContext('2d')
-    // Clear the canvas
-    canvasContext.clearRect(0, 0, (canvas as any).width, (canvas as any).height)
+    if (canvas) {
+      canvas.addEventListener('click', spin, false)
+      canvasContext = (canvas as any).getContext('2d')
+      // Clear the canvas
+      canvasContext.clearRect(0, 0, (canvas as any).width, (canvas as any).height)
+    }
   }
 
   var spin = function spin() {
@@ -237,6 +248,7 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   var wheelDraw = function wheelDraw() {
+    console.log('DRAW')
     clear()
     drawWheel()
     drawNeedle()
@@ -344,11 +356,12 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   var clear = function clear() {
+    var canvas = document.getElementById('canvas')
     var ctx = canvasContext
-    ctx.clearRect(0, 0, 500, 600)
+    ctx.clearRect(0, 0, (canvas as any).width, (canvas as any).height)
   }
 
-  if (names === '') <Header>Enter some names to get started</Header>
+  if (names === '') return <Header>Enter some names to get started</Header>
   else
     return (
       <>
@@ -434,7 +447,7 @@ var WheelComponent = function WheelComponent(_ref) {
                 </text>
               </svg>
 
-              <svg
+              {/* <svg
                 viewBox='0 0 500 500'
                 style={{
                   position: 'absolute',
@@ -468,7 +481,7 @@ var WheelComponent = function WheelComponent(_ref) {
                     or press Ctl + Enter
                   </textPath>
                 </text>
-              </svg>
+              </svg> */}
             </>
           )}
         </div>
