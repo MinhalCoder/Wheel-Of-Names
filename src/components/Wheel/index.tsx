@@ -116,7 +116,7 @@ var WheelComponent = function WheelComponent(_ref) {
   // var timeConstant = 10
 
   var timerHandle = 0
-  var timerDelay = segments.length
+  var timerDelay = 30
 
   // var timerDelay = speedConstant
   var angleCurrent = 0
@@ -126,9 +126,9 @@ var WheelComponent = function WheelComponent(_ref) {
   // var upTime = timeConstant * upDuration
   // var downTime = timeConstant * downDuration
 
-  var maxSpeed = Math.PI / (segments.length >= 20 ? 40 : 50) //(segments.length >= 20 ? 40 : 50)
-  var upTime = segments.length * upDuration //
-  var downTime = segments.length * downDuration * 1.4 //* 1.4
+  var maxSpeed = Math.PI / 30 //(30 >= 20 ? 40 : 50)
+  var upTime = 30 * upDuration //
+  var downTime = 30 * downDuration * 1.4 //* 1.4
 
   var spinStart = 0
   var frames = 0
@@ -231,7 +231,7 @@ var WheelComponent = function WheelComponent(_ref) {
     } else {
       if (winningSegment) {
         console.log('Winner:', winningSegment, '=>', segments[currentSegment])
-        if (segments[currentSegment] === winningSegment && frames > segments.length) {
+        if (segments[currentSegment] === winningSegment && frames > 30) {
           progress = duration / upTime
           angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + 1.6)
           progress = 1
