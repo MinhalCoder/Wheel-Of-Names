@@ -39,7 +39,8 @@ import React from 'react'
 
 var varWheelClicked = false
 var canvasContext = null
-var winningSegment = ''
+var winningSegment
+var winningSegmentIndex
 var segColors
 var segments
 
@@ -62,8 +63,6 @@ var WheelComponent = function WheelComponent(_ref) {
   var currentSegment: any = ''
   var isStarted = false
 
-  winningSegment = _ref.winningSegment
-
   const dispatch = useAppDispatch()
 
   const { names, colors } = useAppSelector(state => state.wheel)
@@ -74,6 +73,9 @@ var WheelComponent = function WheelComponent(_ref) {
     const uniqueNames = Array.from(new Set(filteredNames))
     return uniqueNames
   }
+
+  winningSegment = _ref.winningSegment
+  winningSegmentIndex = getSegments().findIndex(seg => seg === winningSegment)
 
   // function generateColorArray(inputArray: string[], outputLength: number) {
   //   const inputLength = inputArray.length
@@ -112,9 +114,20 @@ var WheelComponent = function WheelComponent(_ref) {
     isFinished = _useState[0],
     setFinished = _useState[1]
 
-  var lengthConstant = segments.length >= 50 ? 30 : 10
-  var winningProgress = segments.length >= 65 ? 0.9361 : 0.9761
-
+  var win = false
+  var lengthConstant = 25 // increasing this will slow down the wheel
+  var slowDownProgress = segments.length >= 30 ? 0.89 : 0.9431 // speed before reaching winningDiff speed, increas to slow down
+  var winningDiff =
+    segments.length >= 70
+      ? 15
+      : segments.length >= 50
+        ? 8
+        : segments.length >= 30
+          ? 6
+          : segments.length >= 16
+            ? 3
+            : 1 // number of sections before the winnig section
+  var winningProgress = segments.length >= 30 ? 0.9661 : 0.9661 // winningDiff speed, increas to slow down
   var timerHandle = 0
   var timerDelay = lengthConstant
 
@@ -205,6 +218,7 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   var spin = function spin() {
+    win = false
     dispatch(setLoading(true))
     if (timerHandle === 0) {
       spinStart = new Date().getTime()
@@ -226,16 +240,25 @@ var WheelComponent = function WheelComponent(_ref) {
       angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2)
     } else {
       progress = duration / downTime
-      if (winningSegment && progress >= winningProgress) progress = winningProgress
-      angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2) // 1.6
+      if (winningSegment) {
+        const slowCheck = progress >= slowDownProgress
 
-      console.log('progress DOWN', progress, angleDelta)
+        if (
+          slowCheck &&
+          currentSegment - winningSegmentIndex > 0 &&
+          currentSegment - winningSegmentIndex <= winningDiff
+        ) {
+          progress = winningProgress
+          win = true
+        } else if (slowCheck) {
+          progress = slowDownProgress
+        }
+      }
+      angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2) // 1.6
 
       if (
         winningSegment
-          ? segments[currentSegment] === winningSegment &&
-            frames > lengthConstant &&
-            duration >= downTime
+          ? segments[currentSegment] === winningSegment && frames > lengthConstant && win
           : progress >= 1
       )
         finished = true
@@ -290,9 +313,11 @@ var WheelComponent = function WheelComponent(_ref) {
         isMobile && segments.length >= 50
           ? 10
           : isMobile || segments.length >= 15
-            ? segments.length >= 35
-              ? 18
-              : 24
+            ? !isLargeScreen && segments.length >= 70
+              ? 12
+              : segments.length >= 35
+                ? 18
+                : 24
             : 40
       }px ` + fontFamily
     ctx.textAlign = 'end'
