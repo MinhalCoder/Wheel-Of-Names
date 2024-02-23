@@ -112,8 +112,8 @@ var WheelComponent = function WheelComponent(_ref) {
     isFinished = _useState[0],
     setFinished = _useState[1]
 
-  var lengthConstant = segments.length >= 65 ? 50 : 30
-  var winningProgress = segments.length >= 65 ? 0.8761 : 0.9761
+  var lengthConstant = segments.length >= 50 ? 30 : 10
+  var winningProgress = segments.length >= 65 ? 0.9361 : 0.9761
 
   var timerHandle = 0
   var timerDelay = lengthConstant

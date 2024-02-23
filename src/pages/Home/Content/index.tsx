@@ -108,8 +108,8 @@ const Content = () => {
           buttonText=''
           isOnlyOnce={false}
           size={337}
-          upDuration={100}
-          downDuration={1000}
+          upDuration={50}
+          downDuration={400}
           fontFamily='Helvetica'
         />
       </div>
