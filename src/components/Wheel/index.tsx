@@ -116,7 +116,7 @@ var WheelComponent = function WheelComponent(_ref) {
 
   var win = false
   var lengthConstant = 25 // increasing this will slow down the wheel
-  var slowDownProgress = segments.length >= 30 ? 0.89 : 0.9431 // speed before reaching winningDiff speed, increas to slow down
+  var slowDownProgress = 0.9431 // speed before reaching winningDiff speed, increas to slow down
   var winningDiff =
     segments.length >= 70
       ? 15
@@ -127,7 +127,7 @@ var WheelComponent = function WheelComponent(_ref) {
           : segments.length >= 16
             ? 3
             : 1 // number of sections before the winnig section
-  var winningProgress = segments.length >= 30 ? 0.9661 : 0.9661 // winningDiff speed, increas to slow down
+  var winningProgress = 0.9661 // winningDiff speed, increas to slow down
   var timerHandle = 0
   var timerDelay = lengthConstant
 
