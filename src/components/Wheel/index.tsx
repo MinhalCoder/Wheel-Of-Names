@@ -265,14 +265,13 @@ var WheelComponent = function WheelComponent(_ref) {
       setFinished(true)
       let min = segments.length >= 30 ? 20 : 40
       let max = segments.length >= 30 ? 200 : 300
-      const delay = Math.floor(Math.random() * (max - min + 1)) + min
-      console.log('DELAY', delay)
+      const delay = Math.floor((Math.random() * (max - min + 1)) / 10) * 10 + min
       setTimeout(() => {
         onFinished(segments[currentSegment], segColors[currentSegment])
         clearInterval(timerHandle)
         timerHandle = 0
         angleDelta = 0
-      }, 150)
+      }, delay)
     }
   }
 
