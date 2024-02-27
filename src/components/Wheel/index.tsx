@@ -115,18 +115,9 @@ var WheelComponent = function WheelComponent(_ref) {
     setFinished = _useState[1]
 
   var win = false
-  var lengthConstant = segments.length >= 30 ? 25 : 20 // increasing this will slow down the wheel
+  var lengthConstant = segments.length >= 30 ? 25 : 15 // increasing this will slow down the wheel
   var slowDownProgress = 0.9431 // speed before reaching winningDiff speed, increas to slow down
-  var winningDiff =
-    segments.length >= 70
-      ? 8
-      : segments.length >= 50
-        ? 5
-        : segments.length >= 30
-          ? 4
-          : segments.length >= 16
-            ? 3
-            : 1 // number of sections before the winnig section
+  var winningDiff = segments.length >= 70 ? 4 : segments.length >= 50 ? 3 : 2 // number of sections before the winnig section
   var winningProgress = 0.9781 // winningDiff speed, increas to slow down
   var timerHandle = 0
   var timerDelay = lengthConstant
@@ -245,7 +236,7 @@ var WheelComponent = function WheelComponent(_ref) {
 
         if (
           slowCheck &&
-          currentSegment - winningSegmentIndex > 0 &&
+          currentSegment - winningSegmentIndex > -0.1 &&
           currentSegment - winningSegmentIndex <= winningDiff
         ) {
           progress = winningProgress
@@ -272,10 +263,16 @@ var WheelComponent = function WheelComponent(_ref) {
 
     if (finished) {
       setFinished(true)
-      onFinished(segments[currentSegment], segColors[currentSegment])
-      clearInterval(timerHandle)
-      timerHandle = 0
-      angleDelta = 0
+      let min = segments.length >= 30 ? 20 : 40
+      let max = segments.length >= 30 ? 200 : 300
+      const delay = Math.floor(Math.random() * (max - min + 1)) + min
+      console.log('DELAY', delay)
+      setTimeout(() => {
+        onFinished(segments[currentSegment], segColors[currentSegment])
+        clearInterval(timerHandle)
+        timerHandle = 0
+        angleDelta = 0
+      }, 150)
     }
   }
 
