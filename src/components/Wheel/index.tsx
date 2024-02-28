@@ -37,7 +37,9 @@ const determineTextColor = hexCode => {
 
 import React from 'react'
 
+var previousIndex = -1
 var varWheelClicked = false
+var firstTime = true
 var canvasContext = null
 var winningSegment
 var winningSegmentIndex
@@ -90,6 +92,21 @@ var WheelComponent = function WheelComponent(_ref) {
   //   return outputArray
   // }
 
+  function getRandomElement(array) {
+    let currentIndex
+
+    // Generate a random index different from the previous one
+    do {
+      currentIndex = Math.floor(Math.random() * 3)
+    } while (currentIndex === previousIndex)
+
+    // Update the previous index for the next call
+    previousIndex = currentIndex
+
+    // Return the element at the randomly generated index
+    return array[currentIndex]
+  }
+
   function generateColorArray(arr: string[], length: number) {
     if (arr.length === 0 || length <= 0) {
       return []
@@ -115,7 +132,7 @@ var WheelComponent = function WheelComponent(_ref) {
     setFinished = _useState[1]
 
   var win = false
-  var lengthConstant = segments.length >= 30 ? 25 : 15 // increasing this will slow down the wheel
+  var lengthConstant = segments.length >= 30 ? 17 : 15 // increasing this will slow down the wheel
   var slowDownProgress = 0.9431 // speed before reaching winningDiff speed, increas to slow down
   var winningDiff = segments.length >= 70 ? 4 : segments.length >= 50 ? 3 : 2 // number of sections before the winnig section
   var winningProgress = 0.9781 // winningDiff speed, increas to slow down
@@ -209,6 +226,7 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   var spin = function spin() {
+    firstTime = true
     win = false
     dispatch(setLoading(true))
     if (timerHandle === 0) {
@@ -261,11 +279,12 @@ var WheelComponent = function WheelComponent(_ref) {
       angleCurrent -= Math.PI * 2
     }
 
-    if (finished) {
+    if (finished && firstTime) {
+      firstTime = false
       setFinished(true)
-      let min = segments.length >= 30 ? 20 : 40
-      let max = segments.length >= 30 ? 200 : 300
-      const delay = Math.floor((Math.random() * (max - min + 1)) / 10) * 10 + min
+      const array = segments.length >= 30 ? [10, 90, 180] : [10, 200, 400]
+      const delay = getRandomElement(array)
+
       setTimeout(() => {
         onFinished(segments[currentSegment], segColors[currentSegment])
         clearInterval(timerHandle)
