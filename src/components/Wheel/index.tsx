@@ -45,6 +45,7 @@ var winningSegment
 var winningSegmentIndex
 var segColors
 var segments
+var spinning = false
 
 var WheelComponent = function WheelComponent(_ref) {
   var onFinished = _ref.onFinished,
@@ -161,10 +162,10 @@ var WheelComponent = function WheelComponent(_ref) {
   const isLargeScreen = isLargeScreenWidth && isLargeScreenHeight
   const isMobile = isMobileWidth || isMobileHeight
 
-  var centerX = isMobile ? 200 : isLargeScreen ? 500 : 450
-  var centerY = isMobile ? 200 : isLargeScreen ? 500 : 450
+  var centerX = isMobile ? 200 : isLargeScreen ? 500 : 430
+  var centerY = isMobile ? 200 : isLargeScreen ? 500 : 430
 
-  const size = isMobile ? 190 : isLargeScreen ? 500 : 440
+  const size = isMobile ? 190 : isLargeScreen ? 500 : 410
 
   const handleKeyDown = event => {
     if (event.altKey && event.key === 'Enter') {
@@ -226,6 +227,8 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   var spin = function spin() {
+    if (spinning) return
+    spinning = true
     firstTime = true
     win = false
     dispatch(setLoading(true))
@@ -293,6 +296,7 @@ var WheelComponent = function WheelComponent(_ref) {
         clearInterval(timerHandle)
         timerHandle = 0
         angleDelta = 0
+        spinning = false
       }, delay)
     }
   }
@@ -426,8 +430,8 @@ var WheelComponent = function WheelComponent(_ref) {
         <div
           id='wheel'
           style={{
-            width: isMobile ? '400px' : isLargeScreen ? '1000px' : '900px',
-            height: isMobile ? '400px' : isLargeScreen ? '1000px' : '900px',
+            width: isMobile ? '400px' : isLargeScreen ? '1000px' : '860px',
+            height: isMobile ? '400px' : isLargeScreen ? '1000px' : '860px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -439,8 +443,8 @@ var WheelComponent = function WheelComponent(_ref) {
         >
           <canvas
             id='canvas'
-            width={isMobile ? '400px' : isLargeScreen ? '1000px' : '900px'}
-            height={isMobile ? '400px' : isLargeScreen ? '1000px' : '900px'}
+            width={isMobile ? '400px' : isLargeScreen ? '1000px' : '860px'}
+            height={isMobile ? '400px' : isLargeScreen ? '1000px' : '860px'}
             style={{
               pointerEvents: isFinished && isOnlyOnce ? 'none' : 'auto',
               textAlign: 'center',
