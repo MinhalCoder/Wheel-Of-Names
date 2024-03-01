@@ -228,6 +228,8 @@ var WheelComponent = function WheelComponent(_ref) {
 
   var spin = function spin() {
     if (spinning) return
+    setWheelClicked(true)
+    varWheelClicked = true
     spinning = true
     firstTime = true
     win = false
@@ -479,13 +481,11 @@ var WheelComponent = function WheelComponent(_ref) {
                 viewBox='0 0 500 500'
                 style={{
                   position: 'absolute',
-                  top: 5,
-                  left: 20,
-                  transform: 'rotate(-70deg)'
+                  top: isMobile ? 35 : isLargeScreen ? 78 : 78,
+                  left: isMobile ? 83 : isLargeScreen ? 197 : 197,
+                  transform: 'rotate(-55deg)'
                 }}
                 onClick={() => {
-                  setWheelClicked(true)
-                  varWheelClicked = true
                   spin()
                 }}
               >
@@ -498,8 +498,9 @@ var WheelComponent = function WheelComponent(_ref) {
                   <textPath
                     xlinkHref='#curve'
                     style={{
-                      fontSize: '40px',
-                      fontWeight: 700,
+                      fontSize: '20px',
+                      letterSpacing: 2,
+                      fontWeight: 600,
                       textShadow: '4px 4px 6px rgba(0, 0, 0)'
                     }}
                     fill='#fff'
