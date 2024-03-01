@@ -132,7 +132,7 @@ var WheelComponent = function WheelComponent(_ref) {
     setFinished = _useState[1]
 
   var win = false
-  var lengthConstant = segments.length >= 30 ? 17 : 15 // increasing this will slow down the wheel
+  var lengthConstant = 15 // increasing this will slow down the wheel
   var slowDownProgress = 0.9431 // speed before reaching winningDiff speed, increas to slow down
   var winningDiff = segments.length >= 70 ? 4 : segments.length >= 50 ? 3 : 2 // number of sections before the winnig section
   var winningProgress = 0.9781 // winningDiff speed, increas to slow down
@@ -161,10 +161,10 @@ var WheelComponent = function WheelComponent(_ref) {
   const isLargeScreen = isLargeScreenWidth && isLargeScreenHeight
   const isMobile = isMobileWidth || isMobileHeight
 
-  var centerX = isMobile ? 200 : isLargeScreen ? 500 : 350
-  var centerY = isMobile ? 200 : isLargeScreen ? 500 : 350
+  var centerX = isMobile ? 200 : isLargeScreen ? 500 : 450
+  var centerY = isMobile ? 200 : isLargeScreen ? 500 : 450
 
-  const size = isMobile ? 190 : isLargeScreen ? 500 : 337
+  const size = isMobile ? 190 : isLargeScreen ? 500 : 440
 
   const handleKeyDown = event => {
     if (event.altKey && event.key === 'Enter') {
@@ -273,10 +273,12 @@ var WheelComponent = function WheelComponent(_ref) {
         finished = true
     }
 
-    angleCurrent += angleDelta
+    if (winningSegment ? true : !finished) {
+      angleCurrent += angleDelta
 
-    while (angleCurrent >= Math.PI * 2) {
-      angleCurrent -= Math.PI * 2
+      while (angleCurrent >= Math.PI * 2) {
+        angleCurrent -= Math.PI * 2
+      }
     }
 
     if (finished && firstTime) {
@@ -284,6 +286,7 @@ var WheelComponent = function WheelComponent(_ref) {
       setFinished(true)
       const array = segments.length >= 30 ? [10, 90, 180] : [10, 200, 400]
       const delay = getRandomElement(array)
+      console.log('delay', delay)
 
       setTimeout(() => {
         onFinished(segments[currentSegment], segColors[currentSegment])
@@ -423,8 +426,8 @@ var WheelComponent = function WheelComponent(_ref) {
         <div
           id='wheel'
           style={{
-            width: isMobile ? '400px' : isLargeScreen ? '1000px' : '700px',
-            height: isMobile ? '400px' : isLargeScreen ? '1000px' : '700px',
+            width: isMobile ? '400px' : isLargeScreen ? '1000px' : '900px',
+            height: isMobile ? '400px' : isLargeScreen ? '1000px' : '900px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -436,8 +439,8 @@ var WheelComponent = function WheelComponent(_ref) {
         >
           <canvas
             id='canvas'
-            width={isMobile ? '400px' : isLargeScreen ? '1000px' : '700px'}
-            height={isMobile ? '400px' : isLargeScreen ? '1000px' : '700px'}
+            width={isMobile ? '400px' : isLargeScreen ? '1000px' : '900px'}
+            height={isMobile ? '400px' : isLargeScreen ? '1000px' : '900px'}
             style={{
               pointerEvents: isFinished && isOnlyOnce ? 'none' : 'auto',
               textAlign: 'center',

@@ -107,7 +107,6 @@ const Content = () => {
           contrastColor='#ffffff'
           buttonText=''
           isOnlyOnce={false}
-          size={337}
           upDuration={50}
           downDuration={400}
           fontFamily='Helvetica'
