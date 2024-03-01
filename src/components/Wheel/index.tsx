@@ -369,7 +369,7 @@ var WheelComponent = function WheelComponent(_ref) {
     }
 
     ctx.beginPath()
-    ctx.arc(centerX, centerY, isMobile ? 30 : 60, 0, PI2, false)
+    ctx.arc(centerX, centerY, isMobile ? 30 : 70, 0, PI2, false)
     ctx.fillStyle = '#fff' // Set your desired fill color
     ctx.fill()
     ctx.closePath()
