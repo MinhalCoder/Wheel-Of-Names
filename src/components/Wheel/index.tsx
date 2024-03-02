@@ -227,9 +227,9 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   var spin = function spin() {
-    if (spinning) return
     setWheelClicked(true)
     varWheelClicked = true
+    if (spinning) return
     spinning = true
     firstTime = true
     win = false
@@ -347,7 +347,7 @@ var WheelComponent = function WheelComponent(_ref) {
     ctx.textAlign = 'end'
     ctx.fillText(
       value.substr(0, isMobile ? 10 : isLargeScreen ? 35 : 17),
-      size / 2 + (isMobile ? 90 : isLargeScreen ? 240 : 160),
+      size / 2 + (isMobile ? 90 : isLargeScreen ? 240 : 190),
       isMobile ? (segments.length >= 50 ? 0 : 5) : segments.length >= 50 ? 0 : 10
     )
     ctx.restore()
@@ -481,9 +481,9 @@ var WheelComponent = function WheelComponent(_ref) {
                 viewBox='0 0 500 500'
                 style={{
                   position: 'absolute',
-                  top: isMobile ? 35 : isLargeScreen ? 78 : 78,
-                  left: isMobile ? 83 : isLargeScreen ? 197 : 197,
-                  transform: 'rotate(-55deg)'
+                  top: 5,
+                  left: 20,
+                  transform: 'rotate(-70deg)'
                 }}
                 onClick={() => {
                   spin()
@@ -498,9 +498,8 @@ var WheelComponent = function WheelComponent(_ref) {
                   <textPath
                     xlinkHref='#curve'
                     style={{
-                      fontSize: '20px',
-                      letterSpacing: 2,
-                      fontWeight: 600,
+                      fontSize: '40px',
+                      fontWeight: 700,
                       textShadow: '4px 4px 6px rgba(0, 0, 0)'
                     }}
                     fill='#fff'
