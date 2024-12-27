@@ -3,7 +3,7 @@ import ShuffleIcon from '@mui/icons-material/Shuffle';
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import ColorLensIcon from '@mui/icons-material/ColorLens';
 import Modal from '@mui/material/Modal';
-import { useState, useRef, useMemo, useEffect } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { setNames, setColors, themes } from '../../store/wheel';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 
