@@ -243,65 +243,74 @@ var WheelComponent = function WheelComponent(_ref) {
   }
 
   var onTimerTick = function onTimerTick() {
-    frames++
-    draw()
-    var duration = new Date().getTime() - spinStart
-    var progress = 0
-    var finished = false
-
+    frames++;
+    draw();
+    var duration = new Date().getTime() - spinStart;
+    var progress = 0;
+    var finished = false;
+  
     if (duration < upTime) {
-      progress = duration / upTime
-      angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2)
+      progress = duration / upTime;
+      angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2);
     } else {
-      progress = duration / downTime
+      progress = duration / downTime;
       if (winningSegment) {
-        const slowCheck = progress >= slowDownProgress
-
+        const slowCheck = progress >= slowDownProgress;
+  
         if (
           slowCheck &&
           currentSegment - winningSegmentIndex > -0.1 &&
           currentSegment - winningSegmentIndex <= winningDiff
         ) {
-          progress = winningProgress
-          win = true
+          progress = winningProgress;
+          win = true;
         } else if (slowCheck) {
-          progress = slowDownProgress
+          progress = slowDownProgress;
         }
       }
-      angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2) // 1.6
-
+      angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2); // 1.6
+  
       if (
         winningSegment
           ? segments[currentSegment] === winningSegment && frames > lengthConstant && win
           : progress >= 1
       )
-        finished = true
+        finished = true;
     }
-
-    if (winningSegment ? true : !finished) {
-      angleCurrent += angleDelta
-
+  
+    if (finished && firstTime) {
+      firstTime = false;
+      setFinished(true);
+  
+      // Randomize the landing position within the rigged section
+      const randomOffset = Math.random() * (Math.PI / 6) - Math.PI / 12; // Random offset between -PI/12 and PI/12
+      angleCurrent += randomOffset;
+  
+      const array = segments.length >= 30 ? [10, 90, 180] : [10, 200, 400];
+      const delay = getRandomElement(array);
+      console.log('delay', delay);
+  
+      setTimeout(() => {
+        onFinished(segments[currentSegment], segColors[currentSegment]);
+        clearInterval(timerHandle);
+        timerHandle = 0;
+        angleDelta = 0;
+        spinning = false;
+      }, delay);
+    }
+  
+    // Normal wheel spin logic
+    if (finished && !firstTime) {
+      clearInterval(timerHandle);
+      timerHandle = 0;
+    } else {
+      angleCurrent += angleDelta;
       while (angleCurrent >= Math.PI * 2) {
-        angleCurrent -= Math.PI * 2
+        angleCurrent -= Math.PI * 2;
       }
     }
-
-    if (finished && firstTime) {
-      firstTime = false
-      setFinished(true)
-      const array = segments.length >= 30 ? [10, 90, 180] : [10, 200, 400]
-      const delay = getRandomElement(array)
-      console.log('delay', delay)
-
-      setTimeout(() => {
-        onFinished(segments[currentSegment], segColors[currentSegment])
-        clearInterval(timerHandle)
-        timerHandle = 0
-        angleDelta = 0
-        spinning = false
-      }, delay)
-    }
   }
+  
 
   var wheelDraw = function wheelDraw() {
     clear()

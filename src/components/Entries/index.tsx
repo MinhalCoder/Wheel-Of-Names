@@ -1,85 +1,100 @@
-import styled from 'styled-components'
-import ShuffleIcon from '@mui/icons-material/Shuffle'
-import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
-import ColorLensIcon from '@mui/icons-material/ColorLens'
-import Modal from '@mui/material/Modal'
-import { useState, useRef, useMemo } from 'react'
-import { setNames, setColors, themes } from '../../store/wheel'
-import { useAppDispatch, useAppSelector } from '../../hooks/store'
+import styled from 'styled-components';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
+import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
+import ColorLensIcon from '@mui/icons-material/ColorLens';
+import Modal from '@mui/material/Modal';
+import { useState, useRef, useMemo, useEffect } from 'react';
+import { setNames, setColors, themes } from '../../store/wheel';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
 
-const Entries = ({ setRiggedName }) => {
-  const dispatch = useAppDispatch()
-  const { names, colors } = useAppSelector(state => state.wheel)
-  const loading = useAppSelector(state => state.wheel.loading)
-  const [showWinnerModal, setShowWinnerModal] = useState(false)
+interface EntriesProps {
+  setRiggedName: (name: string) => void;
+}
+
+const Entries: React.FC<EntriesProps> = ({ setRiggedName }) => {
+  const dispatch = useAppDispatch();
+  const { names, colors } = useAppSelector(state => state.wheel);
+  const loading = useAppSelector(state => state.wheel.loading);
+  const [showWinnerModal, setShowWinnerModal] = useState(false);
 
   const getSelectedArr = () => {
-    let selected = 'Custom'
+    let selected = 'Custom';
     Object.keys(themes).forEach(key => {
-      if (JSON.stringify(themes[key]) === JSON.stringify(colors)) selected = key
-    })
-    return selected
-  }
-  const selectedKey = getSelectedArr()
-  const [selected, setSelected] = useState(selectedKey)
-  const [custom, setCustom] = useState(selectedKey === 'Custom' ? colors : themes[selectedKey])
+      if (JSON.stringify(themes[key]) === JSON.stringify(colors)) selected = key;
+    });
+    return selected;
+  };
 
-  const inputRef = useRef()
+  const selectedKey = getSelectedArr();
+  const [selected, setSelected] = useState(selectedKey);
+  const [custom, setCustom] = useState(selectedKey === 'Custom' ? colors : themes[selectedKey]);
+
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // This function triggers the rigged spin and simulates a regular spin.
+  const triggerRiggedSpin = () => {
+    const namesArray = names.split('\n');
+    const filteredNames = namesArray.filter(name => name !== ''); // Filter out empty names
+
+    if (filteredNames.length === 0) {
+      console.log('No names available for the rigged spin.');
+      return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * filteredNames.length); // Random index for rigged name
+    const riggedName = filteredNames[randomIndex];
+    console.log("Random Rigged Name:", riggedName);  // Debugging line
+
+    // Simulate a regular spin (the name will land at random positions each time)
+    setRiggedName(riggedName);
+  };
 
   const onNameChange = useMemo(() => {
-    return (riggedName, namesArray) => {
-      // if there is a rigged name, set it to the state
+    return (riggedName: string | null, namesArray: string[]) => {
       if (riggedName) {
-        const cleanRiggedName = riggedName
-          .replace(/[^a-zA-Z0-9 ]/g, '') // Include numbers in the regular expression
-          .replace(/\s+/g, ' ')
-        setRiggedName(cleanRiggedName)
+        // Process the rigged name and make sure it's clean
+        const cleanRiggedName = riggedName.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, ' ');
+        setRiggedName(cleanRiggedName);
+        console.log("Updated Rigged Name:", cleanRiggedName); // Debugging line
       }
 
-      // clean the names and set them to the state
-      const cleanNames = namesArray
-        .map((name: string) => {
-          return name.replace(',', '')
-        })
-        .join('\n')
+      // Clean and update the names array, ensuring no extra commas or newlines
+      const cleanNames = namesArray.map(name => name.replace(',', '')).join('\n');
+      console.log("Cleaned Names Array:", cleanNames); // Debugging line
 
-      localStorage.setItem(
-        'names',
-        cleanNames.trim() !== ''
-          ? cleanNames
-          : 'Ali\nBeatriz\nCharles\nDiya\nEric\nFatima\nGabriel\nHanna\n'
-      )
-      dispatch(setNames(cleanNames))
-    }
-  }, [])
+      // Save the names to localStorage and update the store
+      localStorage.setItem('names', cleanNames.trim() !== '' ? cleanNames : 'Ali\nBeatriz\nCharles\nDiya\nEric\nFatima\nGabriel\nHanna\n');
+      dispatch(setNames(cleanNames));
+    };
+  }, [dispatch]);
 
   const handleShuffleClick = () => {
-    const namesArray = names.split('\n')
-    const filteredNames = namesArray.filter(name => name !== '')
-    const shuffledNames = filteredNames.sort(() => Math.random() - 0.5)
-    dispatch(setNames(shuffledNames.join('\n')))
-  }
+    const namesArray = names.split('\n');
+    const filteredNames = namesArray.filter(name => name !== '');
+    const shuffledNames = filteredNames.sort(() => Math.random() - 0.5);
+    dispatch(setNames(shuffledNames.join('\n')));
+  };
 
   const handleSortClick = () => {
-    const namesArray = names.split('\n')
-    let filteredNames = namesArray.filter(name => name !== '')
-    filteredNames.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-    dispatch(setNames(filteredNames.join('\n')))
-  }
+    const namesArray = names.split('\n');
+    let filteredNames = namesArray.filter(name => name !== '');
+    filteredNames.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    dispatch(setNames(filteredNames.join('\n')));
+  };
 
   const handleChangeColorClick = () => {
-    setShowWinnerModal(true)
-  }
+    setShowWinnerModal(true);
+  };
 
   return (
     <ControlsContainer>
       <Modal
         open={showWinnerModal}
         onClose={() => {
-          setShowWinnerModal(false)
+          setShowWinnerModal(false);
         }}
-        aria-labelledby='modal-modal-title'
-        aria-describedby='modal-modal-description'
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
         <div
           style={{
@@ -91,18 +106,17 @@ const Entries = ({ setRiggedName }) => {
             borderRadius: 10,
             overflow: 'hidden',
             backgroundColor: '#12151C',
-            padding: '20px'
+            padding: '20px',
           }}
         >
           {Object.keys(themes).map((key, index) => (
             <Menu
               key={index}
               onClick={() => {
-                dispatch(setColors(themes[key]))
-                localStorage.setItem('theme', JSON.stringify(themes[key]))
-                setSelected(key)
-                setCustom(themes[key])
-                // setShowWinnerModal(false)
+                dispatch(setColors(themes[key]));
+                localStorage.setItem('theme', JSON.stringify(themes[key]));
+                setSelected(key);
+                setCustom(themes[key]);
               }}
               style={{ background: selected === key ? '#272e3d' : '' }}
             >
@@ -112,7 +126,7 @@ const Entries = ({ setRiggedName }) => {
                   display: 'flex',
                   justifyContent: 'flex-start',
                   alignItems: 'center',
-                  gap: '10px'
+                  gap: '10px',
                 }}
               >
                 {themes[key].map((color, i) => (
@@ -123,7 +137,7 @@ const Entries = ({ setRiggedName }) => {
                       height: '20px',
                       width: '20px',
                       background: color,
-                      border: '1px solid white'
+                      border: '1px solid white',
                     }}
                   />
                 ))}
@@ -134,15 +148,14 @@ const Entries = ({ setRiggedName }) => {
             style={{
               borderBottom: '1px solid #fff',
               width: '100%',
-              paddingTop: '20px'
+              paddingTop: '20px',
             }}
           />
           <Menu
             onClick={() => {
-              dispatch(setColors(custom))
-              localStorage.setItem('theme', JSON.stringify(custom))
-              setSelected('Custom')
-              // setShowWinnerModal(false)
+              dispatch(setColors(custom));
+              localStorage.setItem('theme', JSON.stringify(custom));
+              setSelected('Custom');
             }}
             style={{ marginTop: '20px', background: selected === 'Custom' ? '#272e3d' : '' }}
           >
@@ -152,25 +165,25 @@ const Entries = ({ setRiggedName }) => {
                 display: 'flex',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                gap: '10px'
+                gap: '10px',
               }}
             >
               {colors.map((color, i) => (
                 <div
                   onClick={e => {
-                    e.stopPropagation()
+                    e.stopPropagation();
                     setCustom(prev => {
-                      let updated = [...prev]
-                      let index = updated.findIndex(item => item === color)
+                      let updated = [...prev];
+                      let index = updated.findIndex(item => item === color);
                       if (index === -1) {
                         // Add color at index i
-                        updated.splice(i, 0, color)
+                        updated.splice(i, 0, color);
                       } else if (updated.length >= 2) {
                         // Remove the item at index i
-                        updated.splice(index, 1)
+                        updated.splice(index, 1);
                       }
-                      return updated
-                    })
+                      return updated;
+                    });
                   }}
                   key={i}
                   style={{
@@ -179,7 +192,7 @@ const Entries = ({ setRiggedName }) => {
                     width: '20px',
                     border: '1px solid white',
                     borderRadius: 5,
-                    background: color
+                    background: color,
                   }}
                 />
               ))}
@@ -204,28 +217,21 @@ const Entries = ({ setRiggedName }) => {
       <InputBox
         disabled={loading}
         ref={inputRef}
-        placeholder='Enter names, each on a new line'
+        placeholder="Enter names, each on a new line"
         value={names}
         onChange={e => {
-          const { value } = e.target
-          const namesArray = value.split('\n')
-          const riggedName = namesArray.find(name => name.includes(','))
+          const { value } = e.target;
+          const namesArray = value.split('\n');
+          const riggedName = namesArray.find(name => name.includes(','));
           if (riggedName && inputRef?.current) {
-            ;(inputRef?.current as any).style.color = 'transparent'
-            onNameChange(riggedName, namesArray)
-            const cursorPosition = (inputRef?.current as any)?.selectionStart
-            const scroll = (inputRef?.current as any).scrollTop
-            setTimeout(() => {
-              ;(inputRef?.current as any).setSelectionRange(cursorPosition - 1, cursorPosition - 1)
-              ;(inputRef?.current as any).style.color = 'white'
-              ;(inputRef?.current as any).scrollTop = scroll
-            }, 1)
-          } else onNameChange(riggedName, namesArray)
+            onNameChange(riggedName, namesArray);
+          } else onNameChange(riggedName, namesArray);
         }}
       />
+      <Button onClick={triggerRiggedSpin}>Spin with Rigged Name</Button>
     </ControlsContainer>
-  )
-}
+  );
+};
 
 const ControlsContainer = styled.div`
   width: 100%;
@@ -236,13 +242,13 @@ const ControlsContainer = styled.div`
     width: 100%;
     margin-bottom: 20px;
   }
-`
+`;
 
 const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
   gap: 10px;
-`
+`;
 
 const Button = styled.button`
   padding: 3px 10px;
@@ -260,7 +266,7 @@ const Button = styled.button`
   &:focus {
     outline: none;
   }
-`
+`;
 
 const Menu = styled.div`
   display: flex;
@@ -269,7 +275,7 @@ const Menu = styled.div`
   gap: 20px;
   padding: 10px;
   cursor: pointer;
-`
+`;
 
 const InputBox = styled.textarea`
   width: 100%;
@@ -291,6 +297,6 @@ const InputBox = styled.textarea`
   &::placeholder {
     color: #ccc;
   }
-`
+`;
 
-export default Entries
+export default Entries;
